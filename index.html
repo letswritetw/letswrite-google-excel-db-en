@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>How to use Google Sheets as a database</title>
+    <link rel="canonical" href="https://letswrite.tw/google-excel-db-en/">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+
+    <!-- customized style -->
+    <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+      body {
+        background: #EEE;
+      }
+      h1 {
+        padding-top: 16px;
+      }
+      .row {
+        margin-bottom: 1px;
+      }
+      .card {
+        display: inline-block;
+        margin-right: 3%;
+        margin-bottom: 3%;
+        width: 30%;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .12), 0 1px 2px rgba(0, 0, 0, .24)
+      }
+      .avatar img {
+        border-radius: 50%;
+      }
+      h4 {
+        margin-bottom: 0;
+      }
+      @media screen and (max-width: 1024px) {
+        .container {
+          width: 100%;
+        }
+        .card {
+          margin-right: 1.5%;
+          margin-left: 1.5%;
+          width: 45%;
+        }
+      }
+      @media screen and (max-width: 480px) {
+        .card {
+          width: 97%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+      <h1>Member list</h1>
+      <div class="row js-append-card">
+        <!-- 這邊準備 append Card -->
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+      $(function() {
+        $.get('https://spreadsheets.google.com/feeds/list/1IrmKHvX6tQ8zgzPC3ggD3UPu1-hQrE29nfHRs40wUJQ/1/public/values?alt=json', function(data) {
+          var d = data.feed.entry;
+          var items = [];
+          for(var i in d) {
+            var item = {};
+            item.name = d[i].gsx$name.$t;
+            item.birthday = d[i].gsx$birthday.$t;
+            item.email = d[i].gsx$email.$t;
+            item.thumbnail = d[i].gsx$thumbnail.$t;
+            items.push(item);
+          }
+          // console.table(items);
+          for(var i in items) {
+            var Card = `
+              <div class="card">
+                <div class="avatar">
+                  <img src="${items[i].thumbnail}">
+                </div>
+                <div class="info">
+                  <h4>${items[i].name}</h4>
+                  <p>${items[i].birthday}</p>
+                  <a class="button button-primary u-full-width" href="">${items[i].email}</a>
+                </div>
+              </div>
+            `;
+            $('.js-append-card').append(Card);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
